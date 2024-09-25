@@ -623,7 +623,7 @@ class SQLiteBackend(ProcessedDataStore):
         if data:
             try:
                 self._efficient_write_many_data(data, check_typos=check_typos)
-                database_written.send(data)
+                database_written.send(self)
             except:
                 # Purge all data from database, then reraise
                 self.delete(warn=False)

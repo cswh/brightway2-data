@@ -33,7 +33,7 @@ class ExchangeDataset(Model):
 
     def save(self, **kwargs):
         super().save(**kwargs)
-        activity_saved.send(self)
+        exchange_saved.send(self)
 
 
 def get_id(key):
