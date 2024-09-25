@@ -44,6 +44,7 @@ from bw2data.errors import (
 from bw2data.query import Query
 from bw2data.search import IndexManager, Searcher
 from bw2data.utils import as_uncertainty_dict, get_geocollection, get_node
+from bw2data.signals import database_written
 
 _VALID_KEYS = {"location", "name", "product", "type"}
 
@@ -622,6 +623,7 @@ class SQLiteBackend(ProcessedDataStore):
         if data:
             try:
                 self._efficient_write_many_data(data, check_typos=check_typos)
+                database_written.send(data)
             except:
                 # Purge all data from database, then reraise
                 self.delete(warn=False)

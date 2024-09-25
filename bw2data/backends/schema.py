@@ -1,4 +1,5 @@
 from peewee import DoesNotExist, Model, TextField
+from bw2data.signals import activity_saved, exchange_saved
 
 from bw2data.errors import UnknownObject
 from bw2data.sqlite import PickleField
@@ -17,6 +18,10 @@ class ActivityDataset(Model):
     def key(self):
         return (self.database, self.code)
 
+    def save(self, **kwargs):
+        super().save(**kwargs)
+        activity_saved.send(self)
+
 
 class ExchangeDataset(Model):
     data = PickleField()  # Canonical, except for other C fields
@@ -25,6 +30,10 @@ class ExchangeDataset(Model):
     output_code = TextField()  # Canonical
     output_database = TextField()  # Canonical
     type = TextField()  # Reset from `data`
+
+    def save(self, **kwargs):
+        super().save(**kwargs)
+        activity_saved.send(self)
 
 
 def get_id(key):
